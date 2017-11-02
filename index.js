@@ -1,41 +1,59 @@
 const agent = require('superagent')
 const cheerio = require('cheerio')
 const async = require('async')
+const path = require('path')
+const fs = require('fs')
 
 const HOST = 'http://tl.cyg.changyou.com/goods/selling'
+const LIST_SELECTOR = '#J_good_list .title a'
 console.log('爬虫程序开始运行......')
-// 第一步，发起getData请求，获取所有4星角色的列表
-agent
-    .get(HOST)
-    .end(function(err, res){
-        console.log(res.text)
-        // 并发遍历heroes对象
-        // async.mapLimit(heroes, 1,
-        //     function (hero, callback) {
-        //         // 对每个角色对象的处理逻辑
-        //         var heroId = hero[0]	// 获取角色数据第一位的数据，即：角色id
-        //         fetchInfo(heroId, callback)
-        //     },
-        //     function (err, result) {
-        //         console.log('抓取的角色数：' + heroes.length)
-        //     }
-        // )
-    })
-// 获取角色信息
-var concurrencyCount = 0 // 当前并发数记录
-var fetchInfo = function(heroId, callback){
-    concurrencyCount++
-    // console.log("...正在抓取"+ heroId + "...当前并发数记录：" + concurrencyCount)
-    // 根据角色ID，进行详细页面的爬取和解析
-    agent
-        .get('http://wcatproject.com/char/' + heroId)
-        .end(function(err, res){
-            // 获取爬到的角色详细页面内容
-            var $ = cheerio.load(res.text,{decodeEntities: false})
-            // 对页面内容进行解析，以收集队长技能为例
-            console.log(heroId + '\t' + $('.leader-skill span').last().text())
-            concurrencyCount--
-            callback(null, heroId)
+
+const loadRoleList = function (url, callback) {
+    agent.get(url).end(function (err, res) {
+        const html = res.text
+        const $ = cheerio.load(html)
+        const listDom = $(LIST_SELECTOR)
+        const urls = []
+        Object.keys(listDom).forEach(v => {
+            parseInt(v) >= 0 ? urls.push(listDom[v].attribs.href) : null
         })
+        callback(urls)
+    })
+}
+
+const loadRoleInfo = function (url, callback) {
+    agent.get(url).end(function (err, res) {
+        callback(res.text)
+    })
+}
+
+const filterRole = function (keywords) {
 
 }
+
+const createFolder = function(to) {
+    const sep = path.sep
+    const folders = path.dirname(to).split(sep);
+    let p = '';
+    while (folders.length) {
+        p += folders.shift() + sep;
+        if (!fs.existsSync(p)) {
+            fs.mkdirSync(p);
+        }
+    }
+};
+const saveToJSONFile = function (url) {
+    const template = ''
+    const fileName = './database/role.txt'
+    createFolder(fileName)
+    const readStream = fs.createReadStream(fileName)
+    const writeStream = fs.createWriteStream(fileName)
+    readStream.on('data',function (data) {
+        console.log(data)
+    })
+
+    // file.write(url)
+}
+
+saveToJSONFile('dddd')
+// saveToJSONFile('sss')
