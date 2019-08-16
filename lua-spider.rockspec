@@ -9,11 +9,13 @@ description = {
 > Spider for searching my favorite game role
 ]],
    homepage = "https://github.com/xbini/lua-spider",
-   license = "*** please specify a license ***"
+   license = "MIT"
 }
 
 dependencies = {
-   "lua >= 5.3, < 5.4"
+   "lua >= 5.3, < 5.4",
+   "htmlparser = 0.3.6-1",
+   "luasocket = 3.0rc1-2"
 }
 
 build = {
