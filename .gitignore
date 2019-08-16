@@ -1,3 +1,4 @@
-node_modules
-dist
-.idea
+.history
+/luarocks
+/lua
+/lua_modules

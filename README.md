@@ -1,1 +1,3 @@
-## Spider for searching my favorite game role.
+# Lua Spider
+
+> Spider for searching my favorite game role
