@@ -24,8 +24,8 @@ function start(url)
     for index, value in pairs(good_urls) do
         local html_role_string = load_html_string(value)
         local html_role_element = htmlparser.parse(html_role_string)
-        local exist, role_string = resolve_role(value, html_role_string, html_role_element)
-        if exist then
+        local matched, role_string = resolve_role(value, html_role_string, html_role_element)
+        if matched then
             result_count = result_count + 1
             local out_string = role_string
             print(out_string)

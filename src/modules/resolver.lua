@@ -40,46 +40,35 @@ function module.resolve_good_list_url(query_params)
 end
 
 function resolve_attributes(attributes, html_string, html_element)
-    local attributes_values = {}
-    for attr_name, attr in pairs(constants_module.ATTACH_MAP) do
-        -- print(attr_name, attr.id)
+    local current_attributes_values = {}
+    for attr_name, attr in pairs(constants_module.ATTACK_MAP) do
         local p_elements = html_element:select(attr.id .. " .model .c-o-l p")
-        print(p_elements[1]:getcontent())
-        local attach = string.match(p_elements[1]:getcontent(), attr.zh_name .. "攻击 (.*)")
-        local denfense = string.match(p_elements[2]:getcontent(), attr.zh_name .. "攻击 (.*)")
-        local denfense = string.match(p_elements[2]:getcontent(), attr.zh_name .. "攻击 (.*)")
-        local denfense = string.match(p_elements[2]:getcontent(), attr.zh_name .. "攻击 (.*)")
-        print(attach)
-        print(p_elements[2]:getcontent())
-        print(p_elements[3]:getcontent())
-        print(p_elements[4]:getcontent())
-        -- for i, p_element in ipairs(p_elements) do
-        --     local attach = string.match(p_element:gettext(), "<p>" .. attr.zh_name .. "攻击 +(.*)</p>")
-        --     -- print(p_element:gettext())
-        --     print(attach)
-        -- end
+        local attack = string.match(p_elements[1]:getcontent(), attr.zh_name .. "攻击 %+(%d*)")
+        local denfense = string.match(p_elements[2]:getcontent(), attr.zh_name .. "抗 %+(%d*)")
+        local ignore_denfense = string.match(p_elements[3]:getcontent(), "减" .. attr.zh_name .. "抗 %+(%d*)")
+        local ignore_denfense_limit = string.match(p_elements[4]:getcontent(), "减" .. attr.zh_name .. "抗下限 %+(%d*)")
+        current_attributes_values[attr.attack_key] = attack + 0
+        current_attributes_values[attr.denfence_key] = denfense + 0
+        current_attributes_values[attr.ignore_denfense_key] = ignore_denfense + 0
+        current_attributes_values[attr.ignore_denfense_limit_key] = ignore_denfense_limit + 0
     end
-
-    for name, value in pairs(attributes) do
-        if string.find(name, "") then
-        -- body
+    for key, v in pairs(attributes) do
+        local current_value = current_attributes_values[key]
+        if current_value < v then
+            return false
         end
     end
+
+    return true
 end
 
 function module.resolve_role(url, html_string, html_element)
     local role_string = ""
-    local exist = false
-    -- print(html_string)
-    resolve_attributes(module.effective_properties, html_string, html_element)
-    for k, v in pairs(module.effective_properties) do
-        -- print(k, v)
-    end
-    if string.find(html_string, "月白龙马") then
-        exist = true
+    local matched = resolve_attributes(module.effective_properties, html_string, html_element)
+    if matched then
         role_string = "" .. "符合条件：" .. url .. "\n"
     end
-    return exist, role_string
+    return matched, role_string
 end
 
 return module
