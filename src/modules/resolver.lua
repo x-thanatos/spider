@@ -39,17 +39,39 @@ function module.resolve_good_list_url(query_params)
     return url
 end
 
-function resolve_attribute(attribute, html_string)
+function resolve_attributes(attributes, html_string, html_element)
+    local attributes_values = {}
+    for attr_name, attr in pairs(constants_module.ATTACH_MAP) do
+        -- print(attr_name, attr.id)
+        local p_elements = html_element:select(attr.id .. " .model .c-o-l p")
+        print(p_elements[1]:getcontent())
+        local attach = string.match(p_elements[1]:getcontent(), attr.zh_name .. "攻击 (.*)")
+        local denfense = string.match(p_elements[2]:getcontent(), attr.zh_name .. "攻击 (.*)")
+        local denfense = string.match(p_elements[2]:getcontent(), attr.zh_name .. "攻击 (.*)")
+        local denfense = string.match(p_elements[2]:getcontent(), attr.zh_name .. "攻击 (.*)")
+        print(attach)
+        print(p_elements[2]:getcontent())
+        print(p_elements[3]:getcontent())
+        print(p_elements[4]:getcontent())
+        -- for i, p_element in ipairs(p_elements) do
+        --     local attach = string.match(p_element:gettext(), "<p>" .. attr.zh_name .. "攻击 +(.*)</p>")
+        --     -- print(p_element:gettext())
+        --     print(attach)
+        -- end
+    end
+
+    for name, value in pairs(attributes) do
+        if string.find(name, "") then
+        -- body
+        end
+    end
 end
 
 function module.resolve_role(url, html_string, html_element)
     local role_string = ""
     local exist = false
     -- print(html_string)
-    local ele = html_element:select("#bing model c-o-l p")
-    for i, v in ipairs(ele) do
-        print(i, v)
-    end
+    resolve_attributes(module.effective_properties, html_string, html_element)
     for k, v in pairs(module.effective_properties) do
         -- print(k, v)
     end
