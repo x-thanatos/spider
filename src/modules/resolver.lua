@@ -10,6 +10,7 @@ for k, v in pairs(target_setting_module) do
         module.effective_properties[k] = v
     end
 end
+module.effective_properties.price = module.effective_properties.price or 0
 
 function module.resolve_good_urls(root)
     local good_list_element = root:select(constants_module.GOOD_LIST_ID)
@@ -52,19 +53,59 @@ function resolve_attributes(attributes, html_string, html_element)
         current_attributes_values[attr.ignore_denfense_key] = ignore_denfense + 0
         current_attributes_values[attr.ignore_denfense_limit_key] = ignore_denfense_limit + 0
     end
-    for key, v in pairs(attributes) do
-        local current_value = current_attributes_values[key]
-        if current_value < v then
+    return current_attributes_values
+end
+
+function resolve_basic_attributes(attributes, html_string, html_element)
+    local current_basic_attributes_values = {}
+    for key, attr in pairs(constants_module.BASIC_MAP) do
+        local elements = html_element:select("#goods-detail .right .row2 span")
+        local content = elements[attr.position]:getcontent()
+        local value = string.match(content, "(%d*)")
+        current_basic_attributes_values[attr.name] = value + 0
+    end
+    return current_basic_attributes_values
+end
+
+function resolve_info(attributes, html_string, html_element)
+    local current_info_values = {}
+    for key, info in pairs(constants_module.INFO_MAP) do
+        local elements = html_element:select(".goods-info .info-list li")
+        local target_element = elements[info.position]
+        local content = target_element:getcontent()
+        local value = ""
+        if info.name == "price" then
+            value = string.match(content, "￥(%d*)")
+        end
+        current_info_values[info.name] = value + 0
+    end
+    return current_info_values
+end
+
+function matcher(wanted_attributes, all_attributes)
+    for key, v in pairs(wanted_attributes) do
+        local current_value = all_attributes[key]
+        if key ~= "price" and current_value < v then
             return false
         end
     end
-
-    return true
+    return all_attributes.price <= wanted_attributes.price
 end
 
 function module.resolve_role(url, html_string, html_element)
     local role_string = ""
-    local matched = resolve_attributes(module.effective_properties, html_string, html_element)
+    local all_attributes = {}
+    local attributes = resolve_attributes(module.effective_properties, html_string, html_element)
+    local basic_attributes = resolve_basic_attributes(module.effective_properties, html_string, html_element)
+    local info = resolve_info(module.effective_properties, html_string, html_element)
+    for key, value in pairs(basic_attributes) do
+        attributes[key] = value
+    end
+    for key, value in pairs(info) do
+        attributes[key] = value
+    end
+    all_attributes = attributes
+    local matched = matcher(module.effective_properties, all_attributes)
     if matched then
         role_string = "" .. "符合条件：" .. url .. "\n"
     end

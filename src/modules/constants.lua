@@ -45,6 +45,39 @@ module.ATTACK_MAP = {
     }
 }
 
+-- 角色基础属性模板
+module.BASIC_MAP = {
+    hit = {
+        position = 15,
+        zh_name = "命中",
+        name = "hit"
+    },
+    dodge = {
+        position = 16,
+        zh_name = "闪避",
+        name = "dodge"
+    },
+    crit_attack = {
+        position = 17,
+        zh_name = "会心攻击",
+        name = "crit_attack"
+    },
+    crit_denfense = {
+        position = 18,
+        zh_name = "会心防御",
+        name = "crit_denfense"
+    }
+}
+
+-- 角色区服，价格等信息
+module.INFO_MAP = {
+    price = {
+        position = 4,
+        zh_name = "价格",
+        name = "price"
+    }
+}
+
 -- 符合条件的角色输出目录
 module.OUTPUT_ROLE_FILENAME = "role-result-%d.txt"
 
