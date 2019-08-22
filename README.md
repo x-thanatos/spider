@@ -10,7 +10,7 @@ This project required `Lua@5.3` and `LuaRocks@3.1.3`, please make sure your runn
 
 After that, install all dependencies what declared in [lua-spider.rockspec](./lua-spider.rockspec) file via luarocks.
 
-Finally, execute `cd src/modules/lua-cjson-2.1.0/` and run `make install` to install lua-cjson module.
+Finally, decompress lua-cjson-2.1.0.tar.gz file then `cd lua-cjson-2.1.0` and run `make install` to install lua-cjson module.
 
 ## How to use
 

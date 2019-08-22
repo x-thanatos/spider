@@ -1,4 +1,5 @@
-package.path = package.path .. ";./src/modules/?.lua"
+local extend_path = ";./src/modules/?.lua"
+package.path = package.path .. extend_path
 
 local htmlparser = require("htmlparser")
 local load_html_module = require("load-html")

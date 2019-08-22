@@ -3,7 +3,7 @@ local module = {}
 -- 起始列表页
 module.start_url = "http://tl.cyg.changyou.com/goods/selling?time=1"
 
-module.price = 100000
+module.price = 1000000
 
 -- 冰属性
 module.ice_attack = 21000
