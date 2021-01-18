@@ -32,12 +32,17 @@ function module.resolve_areas(html_string)
     return '{"areas":' .. areas .. "}"
 end
 
-function module.resolve_good_list_url(query_params)
-    local url = constants_module.GOOD_LIST_SELLING_URL
+function module.resolve_list_url(url, query_params)
     if query_params.page then
         url = url .. "&page_num=" .. query_params.page
     end
     return url
+end
+
+function module.resolve_max_page(html_element)
+    local page_btns = html_element:select(".ui-pagination .num span")
+    local max_page = tonumber(page_btns[#page_btns]:getcontent())
+    return max_page
 end
 
 function resolve_attributes(attributes, html_string, html_element)

@@ -1,4 +1,4 @@
--- 搜索所有服务器id，用于指定服务器搜索
+-- 搜索所有服务器id
 
 package.path = package.path .. ";./src/modules/?.lua"
 

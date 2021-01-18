@@ -11,15 +11,17 @@ local OUTPUT_ROLE_FILENAME = string.format(constants_module.OUTPUT_ROLE_FILENAME
 local load_html_string = load_html_module.load_html_string
 local load_html_root = load_html_module.load_html_root
 local resolve_good_urls = resolver_module.resolve_good_urls
-local resolve_good_list_url = resolver_module.resolve_good_list_url
+local resolve_list_url = resolver_module.resolve_list_url
 local resolve_role = resolver_module.resolve_role
+local resolve_max_page = resolver_module.resolve_max_page
 
-local page = 1
-local max_page = 1000
 local result_count = 0
 
-function start(url)
-    local good_urls = resolve_good_urls(load_html_root(url))
+function analyze(url, start_page, end_page)
+    local query_param = {}
+    query_param.page = start_page
+    local t_url = resolve_list_url(url, query_param)
+    local good_urls = resolve_good_urls(load_html_root(t_url))
     local count = #good_urls
     for index, value in pairs(good_urls) do
         local html_role_string = load_html_string(value)
@@ -33,21 +35,26 @@ function start(url)
             file:write(out_string)
             file:close()
         end
-        if count == index and page < max_page then
-            local query_param = {}
-            page = page + 1
-            query_param.page = page
-            local url = resolve_good_list_url(query_param)
-            start(url)
+        if count == index and start_page < end_page then
+            start(url, query_param.page + 1, end_page)
         end
     end
 end
--- mode 0: 从第一页开始加载，直到手动结束进程
--- mode 1: TODO
-function launch(mode)
-    if (mode == 0) then
-        start(START_URL)
+
+function launch()
+    local size = 5
+    local html_element = load_html_root(START_URL)
+    local max_page = resolve_max_page(html_element)
+    local pool = {}
+    for i = 1, max_page, size do
+        local start_page = i
+        local end_page = start_page + size
+        if end_page + size > max_page then
+            analyze(START_URL, start_page, max_page)
+        else
+            analyze(START_URL, start_page, end_page)
+        end
     end
 end
 
-launch(0)
+launch()
